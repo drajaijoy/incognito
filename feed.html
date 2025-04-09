@@ -61,14 +61,25 @@
     <div class="coins">Coins: <span id="coinCount">1000</span></div>
   </div>
 
+  <!-- ✅ Create Post Section -->
+  <div id="createPostSection" style="margin-top: 30px; text-align: center;">
+    <textarea id="postInput" placeholder="What's on your mind?" rows="4" style="width: 80%; padding: 10px; border-radius: 8px; font-size: 16px;"></textarea>
+    <br>
+    <button onclick="createPost()" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 8px; background-color: #0f0; color: #000; cursor: pointer;">
+      Post
+    </button>
+  </div>
+
+  <!-- ✅ Feed Area -->
   <div class="feed" id="feed">
-    <!-- Example post -->
+    <!-- Posts will appear here -->
     <div class="post">
       <p>This is a sample post from another user.</p>
       <button class="like-btn" onclick="likePost(this)">Like</button>
     </div>
   </div>
 
+  <!-- ✅ Scripts -->
   <script>
     const username = localStorage.getItem("incognito_username");
     if (!username) {
@@ -81,7 +92,10 @@
     if (!coins) {
       coins = 1000;
       localStorage.setItem("incognito_coins", coins);
+    } else {
+      coins = parseInt(coins);
     }
+
     document.getElementById("coinCount").textContent = coins;
 
     function likePost(button) {
@@ -96,6 +110,35 @@
 
       button.disabled = true;
       button.textContent = "Liked ❤️";
+    }
+
+    function createPost() {
+      const postText = document.getElementById("postInput").value.trim();
+      if (!postText) {
+        alert("Please write something before posting.");
+        return;
+      }
+
+      const feed = document.getElementById("feed");
+
+      const postDiv = document.createElement("div");
+      postDiv.className = "post";
+
+      const para = document.createElement("p");
+      para.textContent = postText;
+
+      const likeButton = document.createElement("button");
+      likeButton.className = "like-btn";
+      likeButton.textContent = "Like";
+      likeButton.onclick = function () {
+        likePost(likeButton);
+      };
+
+      postDiv.appendChild(para);
+      postDiv.appendChild(likeButton);
+      feed.prepend(postDiv);
+
+      document.getElementById("postInput").value = "";
     }
   </script>
 
