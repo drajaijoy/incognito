@@ -52,6 +52,24 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    textarea {
+      width: 90%;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .post-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #0f0;
+      color: #000;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -62,24 +80,14 @@
   </div>
 
   <!-- ✅ Create Post Section -->
-  <div id="createPostSection" style="margin-top: 30px; text-align: center;">
-    <textarea id="postInput" placeholder="What's on your mind?" rows="4" style="width: 80%; padding: 10px; border-radius: 8px; font-size: 16px;"></textarea>
-    <br>
-    <button onclick="createPost()" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 8px; background-color: #0f0; color: #000; cursor: pointer;">
-      Post
-    </button>
+  <div style="text-align:center; margin: 20px auto;">
+    <textarea id="newPost" placeholder="What's on your mind?" rows="4"></textarea><br>
+    <button class="post-btn" onclick="addPost()">Post</button>
   </div>
 
-  <!-- ✅ Feed Area -->
-  <div class="feed" id="feed">
-    <!-- Posts will appear here -->
-    <div class="post">
-      <p>This is a sample post from another user.</p>
-      <button class="like-btn" onclick="likePost(this)">Like</button>
-    </div>
-  </div>
+  <!-- ✅ Feed Section -->
+  <div class="feed" id="feed"></div>
 
-  <!-- ✅ Scripts -->
   <script>
     const username = localStorage.getItem("incognito_username");
     if (!username) {
@@ -95,7 +103,6 @@
     } else {
       coins = parseInt(coins);
     }
-
     document.getElementById("coinCount").textContent = coins;
 
     function likePost(button) {
@@ -112,34 +119,42 @@
       button.textContent = "Liked ❤️";
     }
 
-    function createPost() {
-      const postText = document.getElementById("postInput").value.trim();
-      if (!postText) {
-        alert("Please write something before posting.");
+    function addPost() {
+      const text = document.getElementById("newPost").value.trim();
+      if (!text) {
+        alert("Please write something before posting!");
         return;
       }
 
-      const feed = document.getElementById("feed");
+      const postHTML = `
+        <div class="post">
+          <p>${text}</p>
+          <button class="like-btn" onclick="likePost(this)">Like</button>
+        </div>
+      `;
 
-      const postDiv = document.createElement("div");
-      postDiv.className = "post";
+      document.getElementById("feed").insertAdjacentHTML("afterbegin", postHTML);
+      document.getElementById("newPost").value = "";
 
-      const para = document.createElement("p");
-      para.textContent = postText;
-
-      const likeButton = document.createElement("button");
-      likeButton.className = "like-btn";
-      likeButton.textContent = "Like";
-      likeButton.onclick = function () {
-        likePost(likeButton);
-      };
-
-      postDiv.appendChild(para);
-      postDiv.appendChild(likeButton);
-      feed.prepend(postDiv);
-
-      document.getElementById("postInput").value = "";
+      // Save post to localStorage
+      let posts = JSON.parse(localStorage.getItem("incognito_posts") || "[]");
+      posts.unshift(text);
+      localStorage.setItem("incognito_posts", JSON.stringify(posts));
     }
+
+    // Load existing posts from localStorage on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      const posts = JSON.parse(localStorage.getItem("incognito_posts") || "[]");
+      for (const text of posts) {
+        const postHTML = `
+          <div class="post">
+            <p>${text}</p>
+            <button class="like-btn" onclick="likePost(this)">Like</button>
+          </div>
+        `;
+        document.getElementById("feed").insertAdjacentHTML("beforeend", postHTML);
+      }
+    });
   </script>
 
 </body>
