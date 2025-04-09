@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Incognito Feed 🕶️</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .coins {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    button {
+      background-color: #0f0;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .post {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .like-btn {
+      background-color: #555;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🕶️ Incognito Feed</h2>
+    <div class="coins">Coins: <span id="coin-count">1000</span></div>
+
+    <textarea id="post-content" placeholder="What's on your mind?"></textarea>
+    <button onclick="createPost()">Post</button>
+
+    <div id="feed"></div>
+  </div>
+
+  <script>
+    let coins = 1000;
+    let feed = [];
+
+    function updateCoinsDisplay() {
+      document.getElementById('coin-count').innerText = coins;
+    }
+
+    function createPost() {
+      const content = document.getElementById('post-content').value.trim();
+      if (content) {
+        feed.unshift({ content: content, likes: 0 });
+        document.getElementById('post-content').value = "";
+        renderFeed();
+      }
+    }
+
+    function likePost(index) {
+      if (coins > 0) {
+        coins -= 1;
+        feed[index].likes += 1;
+        updateCoinsDisplay();
+        renderFeed();
+      } else {
+        alert("You're out of coins! 😢 Create content to earn more.");
+      }
+    }
+
+    function renderFeed() {
+      const feedDiv = document.getElementById('feed');
+      feedDiv.innerHTML = '';
+      feed.forEach((post, index) => {
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post';
+        postDiv.innerHTML = `
+          <p>${post.content}</p>
+          <small>Likes: ${post.likes}</small><br/>
+          <button class="like-btn" onclick="likePost(${index})">👍 Like</button>
+        `;
+        feedDiv.appendChild(postDiv);
+      });
+    }
+
+    updateCoinsDisplay();
+  </script>
+</body>
+</html>
