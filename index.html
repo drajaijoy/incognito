@@ -32,24 +32,23 @@
 </head>
 <body>
 
-  <h1>Welcome to Incognito 🕶️</h1>
-  <p>Create your unique username to begin:</p>
 
-  <input id="usernameInput" placeholder="Enter username..." />
-  <br>
-  <button onclick="saveUsername()">Continue</button>
+  <!-- Your page content -->
+  <input type="text" id="usernameInput" placeholder="Enter username...">
+  <button onclick="continueToFeed()">Continue</button>
 
+  <!-- ✅ Paste the JavaScript here -->
   <script>
-    function saveUsername() {
-      const username = document.getElementById("usernameInput").value;
+    function continueToFeed() {
+      const username = document.getElementById("usernameInput").value.trim();
+
       if (!username) {
-        alert("Please enter a username.");
+        alert("Please enter a username!");
         return;
       }
-      // Save to local storage (for now)
-      localStorage.setItem("incognito_user", username);
-      alert("Username saved! Welcome, " + username + " 👋");
-      // In next steps, we'll redirect to the feed
+
+      localStorage.setItem("incognito_username", username);
+      window.location.href = "feed.html";
     }
   </script>
 
