@@ -1,111 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Incognito Feed 🕶️</title>
+  <title>Incognito Feed</title>
+  <meta charset="UTF-8">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #111;
+      background: #111;
       color: #fff;
       margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
       padding: 20px;
     }
-    h2 {
+
+    .header {
       text-align: center;
+      padding: 20px;
+      background: #222;
+      position: sticky;
+      top: 0;
     }
-    .coins {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 60px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      padding: 10px;
-    }
-    button {
-      background-color: #0f0;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      cursor: pointer;
+
+    .username {
+      font-size: 24px;
       font-weight: bold;
     }
-    .post {
-      background-color: #222;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 10px 0;
+
+    .coins {
+      font-size: 18px;
+      color: #0f0;
     }
+
+    .feed {
+      margin-top: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .post {
+      background: #333;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
     .like-btn {
-      background-color: #555;
-      margin-top: 10px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🕶️ Incognito Feed</h2>
-    <div class="coins">Coins: <span id="coin-count">1000</span></div>
 
-    <textarea id="post-content" placeholder="What's on your mind?"></textarea>
-    <button onclick="createPost()">Post</button>
+  <div class="header">
+    <div class="username" id="welcomeUser"></div>
+    <div class="coins">Coins: <span id="coinCount">1000</span></div>
+  </div>
 
-    <div id="feed"></div>
+  <div class="feed" id="feed">
+    <!-- Example post -->
+    <div class="post">
+      <p>This is a sample post from another user.</p>
+      <button class="like-btn" onclick="likePost(this)">Like</button>
+    </div>
   </div>
 
   <script>
-    let coins = 1000;
-    let feed = [];
-
-    function updateCoinsDisplay() {
-      document.getElementById('coin-count').innerText = coins;
+    const username = localStorage.getItem("incognito_username");
+    if (!username) {
+      window.location.href = "index.html";
     }
 
-    function createPost() {
-      const content = document.getElementById('post-content').value.trim();
-      if (content) {
-        feed.unshift({ content: content, likes: 0 });
-        document.getElementById('post-content').value = "";
-        renderFeed();
+    document.getElementById("welcomeUser").textContent = `Welcome, ${username}!`;
+
+    let coins = localStorage.getItem("incognito_coins");
+    if (!coins) {
+      coins = 1000;
+      localStorage.setItem("incognito_coins", coins);
+    }
+    document.getElementById("coinCount").textContent = coins;
+
+    function likePost(button) {
+      if (coins <= 0) {
+        alert("You’re out of coins!");
+        return;
       }
-    }
 
-    function likePost(index) {
-      if (coins > 0) {
-        coins -= 1;
-        feed[index].likes += 1;
-        updateCoinsDisplay();
-        renderFeed();
-      } else {
-        alert("You're out of coins! 😢 Create content to earn more.");
-      }
-    }
+      coins--;
+      localStorage.setItem("incognito_coins", coins);
+      document.getElementById("coinCount").textContent = coins;
 
-    function renderFeed() {
-      const feedDiv = document.getElementById('feed');
-      feedDiv.innerHTML = '';
-      feed.forEach((post, index) => {
-        const postDiv = document.createElement('div');
-        postDiv.className = 'post';
-        postDiv.innerHTML = `
-          <p>${post.content}</p>
-          <small>Likes: ${post.likes}</small><br/>
-          <button class="like-btn" onclick="likePost(${index})">👍 Like</button>
-        `;
-        feedDiv.appendChild(postDiv);
-      });
+      button.disabled = true;
+      button.textContent = "Liked ❤️";
     }
-
-    updateCoinsDisplay();
   </script>
+
 </body>
 </html>
